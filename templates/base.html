@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HORMOCARE+{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #0F766E;
+            --primary-dark: #0B5E57;
+            --primary-darker: #134E4A;
+            --primary-light: #14B8A6;
+            --primary-lighter: #99F6E4;
+            --bg-light: #F4F7F8;
+            --text-light: #1E293B;
+            --sidebar-light: #EEF2F4;
+            --card-light: #FFFFFF;
+            --nav-bg: #0F172A;
+            --border: #E2E8F0;
+            --muted: #64748B;
+            --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --primary: #14B8A6;
+            --primary-dark: #0F9D8F;
+            --primary-darker: #0B7C72;
+            --primary-light: #2DD4BF;
+            --primary-lighter: #134E4A;
+            --bg-light: #0B1220;
+            --text-light: #E2E8F0;
+            --sidebar-light: #1B2740;
+            --card-light: #111B2F;
+            --nav-bg: #070C18;
+            --border: #1F2A44;
+            --muted: #94A3B8;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        .container { display: flex; min-height: 100vh; }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            background: var(--nav-bg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 10px 22px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: contain; background: #fff; padding: 3px; }
+        .logo span em { color: var(--primary-light); font-style: normal; }
+
+        .nav-menu { list-style: none; flex: 1; }
+        .nav-item { margin-bottom: 4px; }
+
+        .nav-link {
+            display: block;
+            padding: 11px 14px;
+            color: #94A3B8;
+            text-decoration: none;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+        .nav-link.active {
+            background: rgba(20, 184, 166, 0.14);
+            color: #fff;
+            border-left-color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .dark-mode-toggle {
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: transparent;
+            color: #CBD5E1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .dark-mode-toggle:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+        /* ---------- Main ---------- */
+        .main-content { flex: 1; min-width: 0; padding: 28px 36px; overflow-y: auto; }
+
+        .header {
+            background: var(--card-light);
+            color: var(--text-light);
+            padding: 18px 24px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .header h1 { font-size: 22px; font-weight: 700; color: var(--text-light); }
+        .user-info { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 14px; }
+
+        .logout-btn {
+            padding: 8px 18px;
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .logout-btn:hover { background: var(--primary); color: #fff; }
+
+        /* ---------- Components ---------- */
+        .card {
+            background-color: var(--card-light);
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .card:hover { box-shadow: 0 6px 22px rgba(15, 118, 110, 0.12); transform: translateY(-1px); }
+
+        .card-title {
+            color: var(--text-light);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .card-title::after {
+            content: "";
+            position: absolute;
+            left: 0; bottom: -1px;
+            width: 44px; height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+        }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15, 118, 110, 0.3); }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 6px 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--card-light);
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+        }
+
+        label { font-weight: 500; font-size: 13px; color: var(--muted); margin-top: 10px; display: block; }
+
+        table { border-collapse: collapse; width: 100%; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: static; padding: 14px; }
+            .logo { padding-bottom: 12px; margin-bottom: 8px; }
+            .nav-menu { display: flex; flex-wrap: wrap; gap: 6px; }
+            .nav-item { margin: 0; }
+            .nav-link { border-left: none; padding: 8px 12px; }
+            .dark-mode-toggle { margin-top: 10px; }
+            .main-content { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='media/hclogo.png') }}" alt="HormoCare+ logo">
+                <span>HORMOCARE<em>+</em></span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                    <li class="nav-item"><a href="{{ url_for('diet') }}" class="nav-link {% if request.endpoint == 'diet' %}active{% endif %}">Diet</a></li>
+                    <li class="nav-item"><a href="{{ url_for('activity') }}" class="nav-link {% if request.endpoint == 'activity' %}active{% endif %}">Activity</a></li>
+                    <li class="nav-item"><a href="{{ url_for('journal') }}" class="nav-link {% if request.endpoint == 'journal' %}active{% endif %}">Journal</a></li>
+                    <li class="nav-item"><a href="{{ url_for('profile') }}" class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}">Profile</a></li>
+                    <li class="nav-item"><a href="{{ url_for('alagi') }}" class="nav-link {% if request.endpoint == 'alagi' %}active{% endif %}">Alagi Assistant</a></li>
+                </ul>
+            </nav>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">Toggle dark mode</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                <div class="user-info">
+                    {% if name %}<span>{{ name }}</span>{% elif user and user.full_name %}<span>{{ user.full_name }}</span>{% endif %}
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                </div>
+            </header>
+
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <script>
+        const currentTheme = localStorage.getItem('theme') || '{{ "dark" if user and user.dark_mode else "light" }}';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        function toggleDarkMode() {
+            const cur = document.documentElement.getAttribute('data-theme');
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            fetch('/toggle_dark_mode', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        }
+    </script>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
